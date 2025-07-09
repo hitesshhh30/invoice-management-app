@@ -17,6 +17,13 @@ function createWindow() {
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js')
         },
+        icon: path.join(__dirname, '../assets/icon.svg'),
+        backgroundColor: '#f9fafb',
+        titleBarStyle: 'hidden',
+        titleBarOverlay: {
+            color: '#ffffff',
+            symbolColor: '#9333ea'
+        },
         show: false
     });
 
@@ -187,15 +194,187 @@ ipcMain.handle('get-all-invoices', async () => {
     }
 });
 
-// WhatsApp integration
+ipcMain.handle('delete-invoice', async (event, invoiceId) => {
+    try {
+        const result = dbManager.deleteInvoice(invoiceId);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// Request PDF generation from renderer process (for better image handling)
+ipcMain.handle('generate-pdf', async (event, customer, design, invoice) => {
+    try {
+        return new Promise((resolve) => {
+            // Send request to renderer and wait for PDF data
+            mainWindow.webContents.send('generate-pdf-request', { customer, design, invoice });
+            
+            // Listen for the PDF data response
+            const handlePDFResponse = (event, response) => {
+                ipcMain.removeListener('pdf-generated', handlePDFResponse);
+                resolve(response);
+            };
+            
+            ipcMain.once('pdf-generated', handlePDFResponse);
+            
+            // Timeout after 10 seconds
+            setTimeout(() => {
+                ipcMain.removeListener('pdf-generated', handlePDFResponse);
+                resolve({ success: false, error: 'PDF generation timeout' });
+            }, 10000);
+        });
+    } catch (error) {
+        console.error('Error in PDF generation:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// Receive PDF data from renderer and save it
+ipcMain.handle('save-pdf-from-renderer', async (event, pdfData, invoiceNumber) => {
+    try {
+        const invoicesDir = path.join(__dirname, '../invoices');
+        if (!fs.existsSync(invoicesDir)) {
+            fs.mkdirSync(invoicesDir, { recursive: true });
+        }
+        
+        const fileName = `Invoice_${invoiceNumber}.pdf`;
+        const pdfPath = path.join(invoicesDir, fileName);
+        
+        // Convert base64 to buffer and save
+        const pdfBuffer = Buffer.from(pdfData.split(',')[1], 'base64');
+        fs.writeFileSync(pdfPath, pdfBuffer);
+        
+        return { success: true, pdfPath, fileName };
+    } catch (error) {
+        console.error('Error saving PDF:', error);
+        return { success: false, error: error.message };
+    }
+});
+
+// WhatsApp integration with improved PDF handling
 ipcMain.handle('share-to-whatsapp', async (event, customer, design, invoice) => {
     try {
-        const message = createWhatsAppMessage(customer, design, invoice);
-        const whatsappUrl = `https://wa.me/${customer.phone}?text=${encodeURIComponent(message)}`;
+        let message;
+        let pdfPath = null;
         
+        if (invoice) {
+            // Create invoice message with comprehensive details
+            const previousBalanceText = invoice.pendingBalance > 0 
+                ? `\n\n📋 *Previous Balance:* ₹${invoice.pendingBalance}`
+                : '';
+            
+            message = `🌟 *JEWELRY INVOICE* 🌟
+
+📄 *Invoice #:* ${invoice.invoiceNumber}
+📅 *Date:* ${new Date(invoice.createdAt || Date.now()).toLocaleDateString()}
+
+👤 *Customer:* ${customer.name}
+📱 *Phone:* ${customer.phone}
+
+✨ *Design Details:*
+🎨 *Name:* ${design.design_name}
+🔖 *Code:* ${design.design_code}
+📂 *Category:* ${design.category}
+💎 *Price:* ₹${design.price}${previousBalanceText}
+
+💳 *TOTAL AMOUNT: ₹${invoice.totalAmount || design.price}*
+
+📄 Please find the detailed invoice PDF attached. You can save and print this for your records.
+
+Thank you for choosing our jewelry collection! 
+
+Best regards,
+Your Jewelry Team`;
+
+            // Generate PDF using renderer process for better image handling
+            try {
+                const pdfResult = await new Promise((resolve) => {
+                    // Send request to renderer
+                    mainWindow.webContents.send('generate-pdf-request', { customer, design, invoice });
+                    
+                    // Listen for response
+                    const handlePDFResponse = (event, response) => {
+                        ipcMain.removeListener('pdf-generated', handlePDFResponse);
+                        resolve(response);
+                    };
+                    
+                    ipcMain.once('pdf-generated', handlePDFResponse);
+                    
+                    // Timeout after 15 seconds
+                    setTimeout(() => {
+                        ipcMain.removeListener('pdf-generated', handlePDFResponse);
+                        resolve({ success: false, error: 'PDF generation timeout' });
+                    }, 15000);
+                });
+                
+                if (pdfResult.success && pdfResult.pdfData) {
+                    // Save the PDF file
+                    const invoicesDir = path.join(__dirname, '../invoices');
+                    if (!fs.existsSync(invoicesDir)) {
+                        fs.mkdirSync(invoicesDir, { recursive: true });
+                    }
+                    
+                    const fileName = `Invoice_${invoice.invoiceNumber}.pdf`;
+                    pdfPath = path.join(invoicesDir, fileName);
+                    
+                    // Convert base64 to buffer and save
+                    const pdfBuffer = Buffer.from(pdfResult.pdfData.split(',')[1], 'base64');
+                    fs.writeFileSync(pdfPath, pdfBuffer);
+                    
+                    console.log('PDF saved at:', pdfPath);
+                } else {
+                    console.error('PDF generation failed:', pdfResult.error);
+                }
+            } catch (pdfError) {
+                console.error('Error generating PDF:', pdfError);
+            }
+        } else {
+            // Create simple design sharing message
+            message = `🌟 *Jewelry Design Alert!* 🌟
+
+✨ *${design.design_name}*
+🔖 Code: ${design.design_code}
+📂 Category: ${design.category}
+💰 Price: ₹${design.price}
+
+Specially curated for you! Would you like to know more about this beautiful piece?
+
+Best regards,
+Your Jewelry Team`;
+        }
+        
+        // Open WhatsApp with message
+        const whatsappUrl = `https://wa.me/${customer.phone.replace(/\D/g, '')}?text=${encodeURIComponent(message)}`;
         await shell.openExternal(whatsappUrl);
-        return { success: true };
+        
+        // If PDF was generated, open file explorer and provide improved instructions
+        if (pdfPath && fs.existsSync(pdfPath)) {
+            // Show the PDF file in explorer
+            shell.showItemInFolder(pdfPath);
+            
+            // Show enhanced instructions dialog
+            const result = dialog.showMessageBoxSync(mainWindow, {
+                type: 'info',
+                title: 'Invoice PDF Ready to Share',
+                message: 'Invoice PDF Generated Successfully!',
+                detail: `📄 PDF Location: ${pdfPath}\n\n🚀 Quick WhatsApp Sharing Steps:\n\n1. ✅ WhatsApp chat is now open\n2. 📎 Click the attachment (paperclip) button\n3. 📁 Select "Document" or "File"\n4. 🔍 Navigate to the PDF file (already highlighted in explorer)\n5. ✉️ Send the PDF to your customer\n\n💡 The PDF file will be automatically highlighted in the explorer window that opened.`,
+                buttons: ['✅ Got it!', '📂 Open Folder Again']
+            });
+            
+            // If user wants to open folder again
+            if (result === 1) {
+                shell.showItemInFolder(pdfPath);
+            }
+        }
+        
+        return { 
+            success: true, 
+            pdfPath, 
+            message: pdfPath ? 'WhatsApp opened and PDF generated successfully' : 'WhatsApp opened successfully'
+        };
     } catch (error) {
+        console.error('Error sharing to WhatsApp:', error);
         return { success: false, error: error.message };
     }
 });
@@ -224,6 +403,41 @@ ipcMain.handle('show-save-dialog', async (event, options) => {
         const result = await dialog.showSaveDialog(mainWindow, options);
         return { success: true, data: result };
     } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('get-image-url', async (event, imagePath) => {
+    try {
+        if (!imagePath) {
+            return { success: false, error: 'No image path provided' };
+        }
+        
+        // Check if file exists
+        if (fs.existsSync(imagePath)) {
+            try {
+                // Read the image file and convert to base64
+                const imageBuffer = fs.readFileSync(imagePath);
+                const imageExtension = path.extname(imagePath).toLowerCase();
+                let mimeType = 'image/jpeg'; // default
+                
+                if (imageExtension === '.png') mimeType = 'image/png';
+                else if (imageExtension === '.gif') mimeType = 'image/gif';
+                else if (imageExtension === '.webp') mimeType = 'image/webp';
+                
+                const base64Image = imageBuffer.toString('base64');
+                const dataUrl = `data:${mimeType};base64,${base64Image}`;
+                
+                return { success: true, url: dataUrl };
+            } catch (readError) {
+                console.error('get-image-url: Error reading image file:', readError);
+                return { success: false, error: 'Failed to read image file' };
+            }
+        } else {
+            return { success: false, error: 'Image file not found' };
+        }
+    } catch (error) {
+        console.error('get-image-url: Exception:', error);
         return { success: false, error: error.message };
     }
 });

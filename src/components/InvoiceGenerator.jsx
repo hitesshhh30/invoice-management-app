@@ -4,6 +4,7 @@ import { Input } from './ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { MessageSquare, FileText, Check, X } from 'lucide-react';
 import { nanoid } from 'nanoid';
+import DesignImage from './DesignImage';
 
 const InvoiceGenerator = ({ customer, onClose }) => {
   const [designs, setDesigns] = useState([]);
@@ -140,13 +141,14 @@ const InvoiceGenerator = ({ customer, onClose }) => {
                   }`}
                 >
                   <div className="flex items-center space-x-3">
-                    {design.image_path && (
-                      <img
-                        src={design.image_path}
+                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-gray-200">
+                      <DesignImage
+                        imagePath={design.image_path}
                         alt={design.design_name}
-                        className="w-12 h-12 object-cover rounded"
+                        className="w-full h-full object-cover"
+                        fallbackIconSize={16}
                       />
-                    )}
+                    </div>
                     <div>
                       <h4 className="font-medium">{design.design_name}</h4>
                       <p className="text-sm text-gray-500">{design.design_code}</p>

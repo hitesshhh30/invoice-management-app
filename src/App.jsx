@@ -3,11 +3,25 @@ import Sidebar from './components/Sidebar';
 import Home from './components/Home';
 import CustomerList from './components/CustomerList';
 import CustomerDetails from './components/CustomerDetails';
+import DesignList from './components/DesignList';
+import InvoiceList from './components/InvoiceList';
+import InvoiceGenerator from './components/InvoiceGenerator';
+// Import PDF service for renderer-based PDF generation
+import { pdfService } from './utils/pdf-service.js';
 
 function App() {
     const [currentPage, setCurrentPage] = useState('home');
     const [selectedCustomer, setSelectedCustomer] = useState(null);
     const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+    // Initialize PDF service (it sets up listeners automatically)
+    useEffect(() => {
+        // PDF service is initialized on import
+        // Cleanup on unmount
+        return () => {
+            pdfService.cleanup();
+        };
+    }, []);
 
     const renderContent = () => {
         switch (currentPage) {
@@ -29,6 +43,14 @@ function App() {
                         onBack={() => setCurrentPage('customers')}
                     />
                 );
+            case 'designs':
+                return (
+                    <DesignList 
+                        onNavigateToHome={() => setCurrentPage('home')}
+                    />
+                );
+            case 'invoices':
+                return <InvoiceList />;
             default:
                 return <Home />;
         }

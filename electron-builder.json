@@ -11,11 +11,11 @@
     ],
     "win": {
         "target": "nsis",
-        "icon": "assets/icon.ico"
+        "icon": "assets/icon.svg"
     },
     "mac": {
         "target": "dmg",
-        "icon": "assets/icon.icns"
+        "icon": "assets/icon.svg"
     },
     "linux": {
         "target": "AppImage",

@@ -55,9 +55,18 @@ const mockElectronAPI = {
     },
     
     // WhatsApp integration
-    shareToWhatsApp: async (customer, design, invoice) => {
+    shareToWhatsapp: async (customer, design, invoice) => {
         console.log('Mock: Sharing to WhatsApp', customer, design, invoice);
-        return { success: true };
+        
+        // Simulate PDF generation
+        if (invoice) {
+            console.log('Mock: Generating PDF for invoice', invoice.invoiceNumber);
+            // Simulate PDF creation delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            console.log('Mock: PDF generated successfully');
+        }
+        
+        return { success: true, pdfPath: '/mock/path/invoice.pdf' };
     },
     
     // File operations

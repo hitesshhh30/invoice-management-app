@@ -48,6 +48,21 @@ class DatabaseManager {
         return this.db.prepare('SELECT * FROM designs ORDER BY created_at DESC').all();
     }
 
+    updateDesign(designId, designData) {
+        const stmt = this.db.prepare(`
+            UPDATE designs 
+            SET design_name = ?, design_code = ?, category = ?, price = ? 
+            WHERE id = ?
+        `);
+        return stmt.run(designData.name, designData.code, designData.category, 
+                       designData.price, designId);
+    }
+
+    deleteDesign(designId) {
+        const stmt = this.db.prepare('DELETE FROM designs WHERE id = ?');
+        return stmt.run(designId);
+    }
+
     // Customer methods
     addCustomer(customerData) {
         const stmt = this.db.prepare(`
@@ -60,13 +75,27 @@ class DatabaseManager {
     getCustomers() {
         return this.db.prepare(`
             SELECT c.*, 
-                   COUNT(i.id) as invoice_count,
-                   SUM(CASE WHEN i.is_paid = 0 THEN i.amount ELSE 0 END) as pending_amount
+                   COALESCE(COUNT(i.id), 0) as invoice_count,
+                   COALESCE(SUM(CASE WHEN i.is_paid = 0 THEN i.amount ELSE 0 END), 0) as pending_amount
             FROM customers c
             LEFT JOIN invoices i ON c.id = i.customer_id
             GROUP BY c.id
             ORDER BY c.created_at DESC
         `).all();
+    }
+
+    updateCustomer(customerId, customerData) {
+        const stmt = this.db.prepare(`
+            UPDATE customers 
+            SET name = ?, phone = ?, email = ? 
+            WHERE id = ?
+        `);
+        return stmt.run(customerData.name, customerData.phone, customerData.email, customerId);
+    }
+
+    deleteCustomer(customerId) {
+        const stmt = this.db.prepare('DELETE FROM customers WHERE id = ?');
+        return stmt.run(customerId);
     }
 
     // Invoice methods
@@ -86,12 +115,27 @@ class DatabaseManager {
             JOIN designs d ON i.design_id = d.id
             WHERE i.customer_id = ?
             ORDER BY i.created_at DESC
-        `).get(customerId);
+        `).all(customerId);
+    }
+
+    getAllInvoices() {
+        return this.db.prepare(`
+            SELECT i.*, d.design_name, d.image_path, d.design_code, c.name as customer_name
+            FROM invoices i
+            JOIN designs d ON i.design_id = d.id
+            JOIN customers c ON i.customer_id = c.id
+            ORDER BY i.created_at DESC
+        `).all();
     }
 
     updateInvoiceStatus(invoiceId, isPaid) {
         const stmt = this.db.prepare('UPDATE invoices SET is_paid = ? WHERE id = ?');
         return stmt.run(isPaid ? 1 : 0, invoiceId);
+    }
+
+    deleteInvoice(invoiceId) {
+        const stmt = this.db.prepare('DELETE FROM invoices WHERE id = ?');
+        return stmt.run(invoiceId);
     }
 }
 

@@ -6,12 +6,12 @@
   left: 0;
   top: 0;
   height: 100%;
-  background-color: #1e2532;
-  color: white;
+  background-color: #ffffff;
+  color: #333333;
   z-index: 50;
   display: flex;
   flex-direction: column;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
   transition-property: width;
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
   transition-duration: 300ms;
@@ -49,17 +49,18 @@
 }
 
 .sidebar-item:hover {
-  background-color: rgba(255, 255, 255, 0.1);
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .sidebar-item.active {
-  background-color: rgba(255, 255, 255, 0.2);
+  background-color: #9333ea;
+  color: white;
   font-weight: 500;
 }
 
 /* Fix for icon colors */
 .icon-default {
-  color: rgba(255, 255, 255, 0.7);
+  color: #6b7280;
 }
 
 .icon-active {
