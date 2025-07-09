@@ -1,0 +1,67 @@
+/* Custom CSS fixes */
+
+/* Fix for sidebar */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: #1e2532;
+  color: white;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  transition-property: width;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar.expanded {
+  width: 250px;
+}
+
+/* Fix for main content */
+.main-content {
+  margin-left: 250px;
+  transition-property: margin;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 70px;
+}
+
+/* Fix for sidebar items */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition-property: background-color, color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: 500;
+}
+
+/* Fix for icon colors */
+.icon-default {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.icon-active {
+  color: white;
+}

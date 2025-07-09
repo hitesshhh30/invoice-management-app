@@ -17,8 +17,12 @@ const CustomerDetails = ({ customer, onBack }) => {
 
     const loadCustomerInvoices = async () => {
         try {
-            const invoiceData = await window.electronAPI.getCustomerInvoices(customer.id);
-            setInvoices(invoiceData);
+            const result = await window.electronAPI.getCustomerInvoices(customer.id);
+            if (result.success) {
+                setInvoices(result.data);
+            } else {
+                console.error('Error loading invoices:', result.error);
+            }
         } catch (error) {
             console.error('Error loading invoices:', error);
         }
@@ -26,8 +30,12 @@ const CustomerDetails = ({ customer, onBack }) => {
 
     const loadDesigns = async () => {
         try {
-            const designData = await window.electronAPI.getDesigns();
-            setDesigns(designData);
+            const result = await window.electronAPI.getDesigns();
+            if (result.success) {
+                setDesigns(result.data);
+            } else {
+                console.error('Error loading designs:', result.error);
+            }
         } catch (error) {
             console.error('Error loading designs:', error);
         }
@@ -43,12 +51,18 @@ const CustomerDetails = ({ customer, onBack }) => {
                 amount: design.price
             };
 
-            await window.electronAPI.createInvoice(invoiceData);
+            const invoiceResult = await window.electronAPI.createInvoice(invoiceData);
+            if (!invoiceResult.success) {
+                throw new Error(invoiceResult.error);
+            }
             
             // Open WhatsApp
-            const success = await window.electronAPI.shareToWhatsApp(customer, design, invoiceData);
+            const whatsappResult = await window.electronAPI.shareToWhatsApp(customer, design, invoiceData);
+            if (!whatsappResult.success) {
+                throw new Error(whatsappResult.error);
+            }
             
-            if (success) {
+            if (whatsappResult.success) {
                 setShowQRModal(true);
                 loadCustomerInvoices(); // Refresh invoices
             }
@@ -327,5 +341,4 @@ const WhatsAppQRModal = ({ onClose, customer }) => {
     );
 };
 
-export default CustomerList;
-export { CustomerDetails };
+export default CustomerDetails;

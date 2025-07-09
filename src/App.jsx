@@ -35,18 +35,26 @@ function App() {
     };
 
     return (
-        <div className="flex h-screen bg-gray-100">
+        <div className="flex h-screen bg-gray-50 overflow-hidden">
             <Sidebar 
                 currentPage={currentPage}
                 onPageChange={setCurrentPage}
                 collapsed={sidebarCollapsed}
                 onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
             />
-            <main className={`flex-1 transition-all duration-300 ${
-                sidebarCollapsed ? 'ml-16' : 'ml-64'
-            }`}>
-                {renderContent()}
-            </main>
+            <div className={`flex-1 flex flex-col main-content ${
+                sidebarCollapsed ? 'sidebar-collapsed' : ''
+            } overflow-y-auto`}>
+                {/* Header */}
+                <header className="bg-white border-b border-gray-200 p-4 shadow-sm">
+                    <h1 className="text-xl font-bold text-gray-800">Invoice Management</h1>
+                </header>
+                
+                {/* Main Content */}
+                <main className="flex-1 overflow-y-auto">
+                    {renderContent()}
+                </main>
+            </div>
         </div>
     );
 }

@@ -4,15 +4,34 @@ const fs = require('fs');
 
 class DatabaseManager {
     constructor() {
-        const dbPath = path.join(__dirname, '../../data/app.db');
-        this.db = new Database(dbPath);
-        this.initializeDatabase();
+        // Ensure the data directory exists
+        const dataDir = path.join(__dirname, '../../data');
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+        
+        const dbPath = path.join(dataDir, 'app.db');
+        console.log('Opening database at:', dbPath);
+        
+        try {
+            this.db = new Database(dbPath);
+            this.initializeDatabase();
+        } catch (error) {
+            console.error('Database initialization failed:', error);
+            throw error;
+        }
     }
 
     initializeDatabase() {
-        const schemaPath = path.join(__dirname, 'schema.sql');
-        const schema = fs.readFileSync(schemaPath, 'utf8');
-        this.db.exec(schema);
+        try {
+            const schemaPath = path.join(__dirname, 'schema.sql');
+            const schema = fs.readFileSync(schemaPath, 'utf8');
+            this.db.exec(schema);
+            console.log('Database schema initialized');
+        } catch (error) {
+            console.error('Failed to initialize database schema:', error);
+            throw error;
+        }
     }
 
     // Design methods

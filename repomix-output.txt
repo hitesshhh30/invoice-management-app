@@ -1,0 +1,2910 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+.gitignore
+electron-builder.json
+electron/main.js
+electron/preload.js
+index.html
+package.json
+postcss.config.js
+project-structure.md
+public/index.html
+README.md
+src/App.jsx
+src/components/CustomerDetails.jsx
+src/components/CustomerList.jsx
+src/components/Home.jsx
+src/components/InvoiceGenerator.jsx
+src/components/Sidebar.jsx
+src/components/ui/button.jsx
+src/components/ui/dialog.jsx
+src/components/ui/input.jsx
+src/components/ui/sidebar.jsx
+src/components/ui/table.jsx
+src/custom.css
+src/database/db.js
+src/database/schema.sql
+src/index.css
+src/main.jsx
+src/utils/csv-parser.js
+src/utils/mockElectronAPI.js
+src/utils/pdf-generator.js
+src/utils/whatsapp.js
+tailwind.config.js
+vite.config.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="index.html">
+<!-- index.html for invoice-management-app -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Management App</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
+</file>
+
+<file path="postcss.config.js">
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
+</file>
+
+<file path="src/custom.css">
+/* Custom CSS fixes */
+
+/* Fix for sidebar */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: #1e2532;
+  color: white;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+  transition-property: width;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar.expanded {
+  width: 250px;
+}
+
+/* Fix for main content */
+.main-content {
+  margin-left: 250px;
+  transition-property: margin;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 300ms;
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 70px;
+}
+
+/* Fix for sidebar items */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  transition-property: background-color, color;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.active {
+  background-color: rgba(255, 255, 255, 0.2);
+  font-weight: 500;
+}
+
+/* Fix for icon colors */
+.icon-default {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.icon-active {
+  color: white;
+}
+</file>
+
+<file path="src/utils/mockElectronAPI.js">
+// Mock API for development when running in browser
+const mockElectronAPI = {
+    // Design operations
+    addDesign: async (designData) => {
+        console.log('Mock: Adding design', designData);
+        return { success: true, data: { id: Date.now(), ...designData } };
+    },
+    getDesigns: async () => {
+        console.log('Mock: Getting designs');
+        return { success: true, data: [] };
+    },
+    updateDesign: async (designId, designData) => {
+        console.log('Mock: Updating design', designId, designData);
+        return { success: true, data: { id: designId, ...designData } };
+    },
+    deleteDesign: async (designId) => {
+        console.log('Mock: Deleting design', designId);
+        return { success: true, data: { deleted: true } };
+    },
+    
+    // Customer operations
+    addCustomer: async (customerData) => {
+        console.log('Mock: Adding customer', customerData);
+        return { success: true, data: { id: Date.now(), ...customerData } };
+    },
+    getCustomers: async () => {
+        console.log('Mock: Getting customers');
+        return { success: true, data: [] };
+    },
+    updateCustomer: async (customerId, customerData) => {
+        console.log('Mock: Updating customer', customerId, customerData);
+        return { success: true, data: { id: customerId, ...customerData } };
+    },
+    deleteCustomer: async (customerId) => {
+        console.log('Mock: Deleting customer', customerId);
+        return { success: true, data: { deleted: true } };
+    },
+    
+    // Invoice operations
+    createInvoice: async (invoiceData) => {
+        console.log('Mock: Creating invoice', invoiceData);
+        return { success: true, data: { id: Date.now(), ...invoiceData } };
+    },
+    getCustomerInvoices: async (customerId) => {
+        console.log('Mock: Getting customer invoices', customerId);
+        return { success: true, data: [] };
+    },
+    updateInvoiceStatus: async (invoiceId, isPaid) => {
+        console.log('Mock: Updating invoice status', invoiceId, isPaid);
+        return { success: true, data: { id: invoiceId, isPaid } };
+    },
+    getAllInvoices: async () => {
+        console.log('Mock: Getting all invoices');
+        return { success: true, data: [] };
+    },
+    
+    // WhatsApp integration
+    shareToWhatsApp: async (customer, design, invoice) => {
+        console.log('Mock: Sharing to WhatsApp', customer, design, invoice);
+        return { success: true };
+    },
+    
+    // File operations
+    saveImage: async (imageData, fileName) => {
+        console.log('Mock: Saving image', fileName);
+        return { success: true, filePath: `/mock/path/${fileName}` };
+    },
+    showSaveDialog: async (options) => {
+        console.log('Mock: Showing save dialog', options);
+        return { success: true, data: { filePath: '/mock/path/file.pdf' } };
+    }
+};
+
+// Set up the mock API if window.electronAPI is not available
+if (typeof window !== 'undefined' && !window.electronAPI) {
+    window.electronAPI = mockElectronAPI;
+}
+
+export default mockElectronAPI;
+</file>
+
+<file path=".gitignore">
+node_modules
+</file>
+
+<file path="electron-builder.json">
+{
+    "appId": "com.yourcompany.invoiceapp",
+    "productName": "Invoice Management App",
+    "directories": {
+        "output": "dist"
+    },
+    "files": [
+        "dist/**/*",
+        "electron/**/*",
+        "node_modules/**/*"
+    ],
+    "win": {
+        "target": "nsis",
+        "icon": "assets/icon.ico"
+    },
+    "mac": {
+        "target": "dmg",
+        "icon": "assets/icon.icns"
+    },
+    "linux": {
+        "target": "AppImage",
+        "icon": "assets/icon.png"
+    }
+}
+</file>
+
+<file path="electron/main.js">
+// Electron main process
+const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const path = require('path');
+const isDev = !app.isPackaged;
+const DatabaseManager = require('../src/database/db');
+
+let mainWindow;
+let dbManager;
+
+function createWindow() {
+    mainWindow = new BrowserWindow({
+        width: 1400,
+        height: 900,
+        webPreferences: {
+            nodeIntegration: false,
+            contextIsolation: true,
+            preload: path.join(__dirname, 'preload.js')
+        },
+        icon: path.join(__dirname, '../assets/icon.png'),
+        titleBarStyle: 'default',
+        show: false
+    });
+
+    // Load the app
+    if (isDev) {
+        mainWindow.loadURL('http://localhost:3000');
+        mainWindow.webContents.openDevTools();
+    } else {
+        mainWindow.loadFile(path.join(__dirname, '../dist/index.html'));
+    }
+
+    mainWindow.once('ready-to-show', () => {
+        mainWindow.show();
+    });
+
+    mainWindow.on('closed', () => {
+        mainWindow = null;
+    });
+}
+
+app.whenReady().then(() => {
+    // Initialize database
+    dbManager = new DatabaseManager();
+    
+    createWindow();
+
+    app.on('activate', () => {
+        if (BrowserWindow.getAllWindows().length === 0) {
+            createWindow();
+        }
+    });
+});
+
+app.on('window-all-closed', () => {
+    if (process.platform !== 'darwin') {
+        app.quit();
+    }
+});
+
+// IPC Handlers for Database Operations
+
+// Design operations
+ipcMain.handle('add-design', async (event, designData) => {
+    try {
+        const result = dbManager.addDesign(designData);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('get-designs', async () => {
+    try {
+        const designs = dbManager.getDesigns();
+        return { success: true, data: designs };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('update-design', async (event, designId, designData) => {
+    try {
+        const result = dbManager.updateDesign(designId, designData);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('delete-design', async (event, designId) => {
+    try {
+        const result = dbManager.deleteDesign(designId);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// Customer operations
+ipcMain.handle('add-customer', async (event, customerData) => {
+    try {
+        const result = dbManager.addCustomer(customerData);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('get-customers', async () => {
+    try {
+        const customers = dbManager.getCustomers();
+        return { success: true, data: customers };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('update-customer', async (event, customerId, customerData) => {
+    try {
+        const result = dbManager.updateCustomer(customerId, customerData);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('delete-customer', async (event, customerId) => {
+    try {
+        const result = dbManager.deleteCustomer(customerId);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// Invoice operations
+ipcMain.handle('create-invoice', async (event, invoiceData) => {
+    try {
+        const result = dbManager.createInvoice(invoiceData);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('get-customer-invoices', async (event, customerId) => {
+    try {
+        const invoices = dbManager.getCustomerInvoices(customerId);
+        return { success: true, data: invoices };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('update-invoice-status', async (event, invoiceId, isPaid) => {
+    try {
+        const result = dbManager.updateInvoiceStatus(invoiceId, isPaid);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('get-all-invoices', async () => {
+    try {
+        const invoices = dbManager.getAllInvoices();
+        return { success: true, data: invoices };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// WhatsApp integration
+ipcMain.handle('share-to-whatsapp', async (event, customer, design, invoice) => {
+    try {
+        const message = createWhatsAppMessage(customer, design, invoice);
+        const whatsappUrl = `https://wa.me/${customer.phone}?text=${encodeURIComponent(message)}`;
+        
+        await shell.openExternal(whatsappUrl);
+        return { success: true };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+// File operations
+ipcMain.handle('save-image', async (event, imageData, fileName) => {
+    try {
+        const fs = require('fs');
+        const uploadsDir = path.join(__dirname, '../uploads');
+        
+        if (!fs.existsSync(uploadsDir)) {
+            fs.mkdirSync(uploadsDir, { recursive: true });
+        }
+        
+        const filePath = path.join(uploadsDir, fileName);
+        fs.writeFileSync(filePath, imageData);
+        
+        return { success: true, filePath };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+
+ipcMain.handle('show-save-dialog', async (event, options) => {
+    try {
+        const result = await dialog.showSaveDialog(mainWindow, options);
+        return { success: true, data: result };
+    } catch (error) {
+        return { success: false, error: error.message };
+    }
+});
+</file>
+
+<file path="electron/preload.js">
+// Electron preload script
+const { contextBridge, ipcRenderer } = require('electron');
+
+// Expose protected methods that allow the renderer process to use
+// the ipcRenderer without exposing the entire object
+contextBridge.exposeInMainWorld('electronAPI', {
+    // Design operations
+    addDesign: (designData) => ipcRenderer.invoke('add-design', designData),
+    getDesigns: () => ipcRenderer.invoke('get-designs'),
+    updateDesign: (designId, designData) => ipcRenderer.invoke('update-design', designId, designData),
+    deleteDesign: (designId) => ipcRenderer.invoke('delete-design', designId),
+    
+    // Customer operations
+    addCustomer: (customerData) => ipcRenderer.invoke('add-customer', customerData),
+    getCustomers: () => ipcRenderer.invoke('get-customers'),
+    updateCustomer: (customerId, customerData) => ipcRenderer.invoke('update-customer', customerId, customerData),
+    deleteCustomer: (customerId) => ipcRenderer.invoke('delete-customer', customerId),
+    
+    // Invoice operations
+    createInvoice: (invoiceData) => ipcRenderer.invoke('create-invoice', invoiceData),
+    getCustomerInvoices: (customerId) => ipcRenderer.invoke('get-customer-invoices', customerId),
+    updateInvoiceStatus: (invoiceId, isPaid) => ipcRenderer.invoke('update-invoice-status', invoiceId, isPaid),
+    getAllInvoices: () => ipcRenderer.invoke('get-all-invoices'),
+    
+    // WhatsApp integration
+    shareToWhatsApp: (customer, design, invoice) => ipcRenderer.invoke('share-to-whatsapp', customer, design, invoice),
+    
+    // File operations
+    saveImage: (imageData, fileName) => ipcRenderer.invoke('save-image', imageData, fileName),
+    showSaveDialog: (options) => ipcRenderer.invoke('show-save-dialog', options)
+});
+</file>
+
+<file path="package.json">
+{
+  "name": "invoice-management-app",
+  "version": "1.0.0",
+  "main": "electron/main.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "electron": "electron .",
+    "electron-dev": "concurrently \"npm run dev\" \"wait-on http://localhost:3000 && cross-env NODE_ENV=development electron .\"",
+    "dist": "npm run build && electron-builder",
+    "postinstall": "npm rebuild better-sqlite3"
+  },
+  "build": {
+    "appId": "com.yourcompany.invoiceapp",
+    "productName": "Invoice Management App",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "node_modules/**/*"
+    ]
+  },
+  "dependencies": {
+    "@tailwindcss/postcss": "^4.1.11",
+    "autoprefixer": "^10.4.21",
+    "better-sqlite3": "^12.2.0",
+    "electron": "^37.2.0",
+    "lucide-react": "^0.525.0",
+    "nanoid": "^5.1.5",
+    "papaparse": "^5.5.3",
+    "postcss": "^8.5.6",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "xlsx": "^0.18.5"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "@vitejs/plugin-react": "^4.6.0",
+    "concurrently": "^9.2.0",
+    "cross-env": "^7.0.3",
+    "electron-builder": "^26.0.12",
+    "electron-rebuild": "^3.2.9",
+    "tailwindcss": "^3.4.17",
+    "vite": "^7.0.3",
+    "wait-on": "^8.0.3"
+  }
+}
+</file>
+
+<file path="project-structure.md">
+# Project Structure: invoice-management-app
+
+```
+invoice-management-app/
+├── public/
+│   ├── index.html
+│   └── assets/
+├── src/
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── button.jsx
+│   │   │   ├── input.jsx
+│   │   │   ├── table.jsx
+│   │   │   ├── dialog.jsx
+│   │   │   └── sidebar.jsx
+│   │   ├── Sidebar.jsx
+│   │   ├── Home.jsx
+│   │   ├── CustomerList.jsx
+│   │   ├── CustomerDetails.jsx
+│   │   └── InvoiceGenerator.jsx
+│   ├── database/
+│   │   ├── db.js
+│   │   └── schema.sql
+│   ├── utils/
+│   │   ├── whatsapp.js
+│   │   ├── pdf-generator.js
+│   │   └── csv-parser.js
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+├── electron/
+│   ├── main.js
+│   └── preload.js
+├── package.json
+├── electron-builder.json
+├── tailwind.config.js
+└── README.md
+```
+
+This file documents the folder and file structure for the `invoice-management-app` project.
+</file>
+
+<file path="public/index.html">
+<!-- index.html for invoice-management-app -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Invoice Management App</title>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+</html>
+</file>
+
+<file path="README.md">
+# invoice-management-app
+Desktop application for Jewellery Shop
+</file>
+
+<file path="src/App.jsx">
+import React, { useState, useEffect } from 'react';
+import Sidebar from './components/Sidebar';
+import Home from './components/Home';
+import CustomerList from './components/CustomerList';
+import CustomerDetails from './components/CustomerDetails';
+
+function App() {
+    const [currentPage, setCurrentPage] = useState('home');
+    const [selectedCustomer, setSelectedCustomer] = useState(null);
+    const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+    const renderContent = () => {
+        switch (currentPage) {
+            case 'home':
+                return <Home />;
+            case 'customers':
+                return (
+                    <CustomerList 
+                        onCustomerSelect={(customer) => {
+                            setSelectedCustomer(customer);
+                            setCurrentPage('customer-details');
+                        }}
+                    />
+                );
+            case 'customer-details':
+                return (
+                    <CustomerDetails 
+                        customer={selectedCustomer}
+                        onBack={() => setCurrentPage('customers')}
+                    />
+                );
+            default:
+                return <Home />;
+        }
+    };
+
+    return (
+        <div className="flex h-screen bg-gray-50 overflow-hidden">
+            <Sidebar 
+                currentPage={currentPage}
+                onPageChange={setCurrentPage}
+                collapsed={sidebarCollapsed}
+                onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+            />
+            <div className={`flex-1 flex flex-col main-content ${
+                sidebarCollapsed ? 'sidebar-collapsed' : ''
+            } overflow-y-auto`}>
+                {/* Header */}
+                
+                
+                {/* Main Content */}
+                <main className="flex-1 overflow-y-auto">
+                    {renderContent()}
+                </main>
+            </div>
+        </div>
+    );
+}
+
+export default App;
+</file>
+
+<file path="src/components/CustomerDetails.jsx">
+import React, { useState, useEffect } from 'react';
+import { ArrowLeft, MessageCircle, Mail, Phone, Download, Edit, QrCode } from 'lucide-react';
+
+const CustomerDetails = ({ customer, onBack }) => {
+    const [invoices, setInvoices] = useState([]);
+    const [designs, setDesigns] = useState([]);
+    const [showShareModal, setShowShareModal] = useState(false);
+    const [selectedDesign, setSelectedDesign] = useState(null);
+    const [showQRModal, setShowQRModal] = useState(false);
+
+    useEffect(() => {
+        if (customer) {
+            loadCustomerInvoices();
+            loadDesigns();
+        }
+    }, [customer]);
+
+    const loadCustomerInvoices = async () => {
+        try {
+            const result = await window.electronAPI.getCustomerInvoices(customer.id);
+            if (result.success) {
+                setInvoices(result.data);
+            } else {
+                console.error('Error loading invoices:', result.error);
+            }
+        } catch (error) {
+            console.error('Error loading invoices:', error);
+        }
+    };
+
+    const loadDesigns = async () => {
+        try {
+            const result = await window.electronAPI.getDesigns();
+            if (result.success) {
+                setDesigns(result.data);
+            } else {
+                console.error('Error loading designs:', result.error);
+            }
+        } catch (error) {
+            console.error('Error loading designs:', error);
+        }
+    };
+
+    const handleShareDesign = async (design) => {
+        try {
+            // Generate invoice
+            const invoiceData = {
+                invoiceNumber: `INV-${Date.now()}`,
+                customerId: customer.id,
+                designId: design.id,
+                amount: design.price
+            };
+
+            const invoiceResult = await window.electronAPI.createInvoice(invoiceData);
+            if (!invoiceResult.success) {
+                throw new Error(invoiceResult.error);
+            }
+            
+            // Open WhatsApp
+            const whatsappResult = await window.electronAPI.shareToWhatsApp(customer, design, invoiceData);
+            if (!whatsappResult.success) {
+                throw new Error(whatsappResult.error);
+            }
+            
+            if (whatsappResult.success) {
+                setShowQRModal(true);
+                loadCustomerInvoices(); // Refresh invoices
+            }
+        } catch (error) {
+            console.error('Error sharing design:', error);
+        }
+    };
+
+    const updatePaymentStatus = async (invoiceId, isPaid) => {
+        try {
+            await window.electronAPI.updateInvoiceStatus(invoiceId, isPaid);
+            loadCustomerInvoices();
+        } catch (error) {
+            console.error('Error updating payment status:', error);
+        }
+    };
+
+    const totalPending = invoices.reduce((sum, invoice) => 
+        invoice.is_paid ? sum : sum + invoice.amount, 0
+    );
+
+    return (
+        <div className="p-6">
+            {/* Header */}
+            <div className="flex items-center mb-6">
+                <button
+                    onClick={onBack}
+                    className="flex items-center text-gray-600 hover:text-gray-900 mr-4"
+                >
+                    <ArrowLeft size={20} className="mr-2" />
+                    Back to Customers
+                </button>
+                <div className="flex-1">
+                    <h1 className="text-3xl font-bold text-gray-800">{customer.name}</h1>
+                    <p className="text-gray-600">Customer Details & Transaction History</p>
+                </div>
+                <div className="flex space-x-3">
+                    <button
+                        onClick={() => setShowQRModal(true)}
+                        className="flex items-center px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors"
+                    >
+                        <MessageCircle size={20} className="mr-2" />
+                        WhatsApp
+                    </button>
+                    <button className="flex items-center px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors">
+                        <Edit size={20} className="mr-2" />
+                        Edit
+                    </button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Customer Info */}
+                <div className="lg:col-span-1">
+                    <div className="bg-white rounded-lg shadow p-6">
+                        <div className="flex items-center mb-4">
+                            <div className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white text-xl font-bold">
+                                {customer.name.charAt(0).toUpperCase()}
+                            </div>
+                            <div className="ml-4">
+                                <h2 className="text-xl font-bold text-gray-800">{customer.name}</h2>
+                                <p className="text-gray-600">Customer ID: {customer.id}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="space-y-3">
+                            <div className="flex items-center">
+                                <Phone size={16} className="text-gray-500 mr-3" />
+                                <span className="text-gray-700">{customer.phone}</span>
+                            </div>
+                            <div className="flex items-center">
+                                <Mail size={16} className="text-gray-500 mr-3" />
+                                <span className="text-gray-700">{customer.email}</span>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 pt-6 border-t">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="text-center">
+                                    <p className="text-2xl font-bold text-blue-600">{invoices.length}</p>
+                                    <p className="text-sm text-gray-600">Total Invoices</p>
+                                </div>
+                                <div className="text-center">
+                                    <p className="text-2xl font-bold text-red-600">₹{totalPending}</p>
+                                    <p className="text-sm text-gray-600">Pending Amount</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Share Design */}
+                    <div className="bg-white rounded-lg shadow p-6 mt-6">
+                        <h3 className="text-lg font-semibold mb-4">Share New Design</h3>
+                        <div className="space-y-3">
+                            {designs.slice(0, 3).map(design => (
+                                <div key={design.id} className="flex items-center justify-between p-3 border rounded-lg">
+                                    <div>
+                                        <p className="font-medium">{design.design_name}</p>
+                                        <p className="text-sm text-gray-600">₹{design.price}</p>
+                                    </div>
+                                    <button
+                                        onClick={() => handleShareDesign(design)}
+                                        className="px-3 py-1 bg-blue-500 text-white rounded text-sm hover:bg-blue-600"
+                                    >
+                                        Share
+                                    </button>
+                                </div>
+                            ))}
+                        </div>
+                        <button className="w-full mt-4 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                            View All Designs
+                        </button>
+                    </div>
+                </div>
+
+                {/* Transaction History */}
+                <div className="lg:col-span-2">
+                    <div className="bg-white rounded-lg shadow">
+                        <div className="p-6 border-b">
+                            <h3 className="text-lg font-semibold">Transaction History</h3>
+                        </div>
+                        <div className="overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Invoice
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Design
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Amount
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Status
+                                        </th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                            Actions
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-gray-200">
+                                    {invoices.map((invoice) => (
+                                        <tr key={invoice.id}>
+                                            <td className="px-6 py-4">
+                                                <div className="text-sm font-medium text-gray-900">
+                                                    {invoice.invoice_number}
+                                                </div>
+                                                <div className="text-sm text-gray-500">
+                                                    {new Date(invoice.created_at).toLocaleDateString()}
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    {invoice.image_path && (
+                                                        <img
+                                                            src={invoice.image_path}
+                                                            alt={invoice.design_name}
+                                                            className="w-10 h-10 rounded-lg mr-3"
+                                                        />
+                                                    )}
+                                                    <div>
+                                                        <div className="text-sm font-medium text-gray-900">
+                                                            {invoice.design_name}
+                                                        </div>
+                                                        <div className="text-sm text-gray-500">
+                                                            {invoice.design_code}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="text-sm text-gray-900">₹{invoice.amount}</div>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                                                    invoice.is_paid
+                                                        ? 'bg-green-100 text-green-800'
+                                                        : 'bg-red-100 text-red-800'
+                                                }`}>
+                                                    {invoice.is_paid ? 'Paid' : 'Pending'}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex space-x-2">
+                                                    <button
+                                                        onClick={() => updatePaymentStatus(invoice.id, !invoice.is_paid)}
+                                                        className={`text-sm px-3 py-1 rounded ${
+                                                            invoice.is_paid
+                                                                ? 'bg-red-100 text-red-700 hover:bg-red-200'
+                                                                : 'bg-green-100 text-green-700 hover:bg-green-200'
+                                                        }`}
+                                                    >
+                                                        {invoice.is_paid ? 'Mark Unpaid' : 'Mark Paid'}
+                                                    </button>
+                                                    <button className="text-blue-600 hover:text-blue-800">
+                                                        <Download size={16} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* WhatsApp QR Modal */}
+            {showQRModal && (
+                <WhatsAppQRModal
+                    onClose={() => setShowQRModal(false)}
+                    customer={customer}
+                />
+            )}
+        </div>
+    );
+};
+
+// WhatsApp QR Modal Component
+const WhatsAppQRModal = ({ onClose, customer }) => {
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-8 max-w-md w-full mx-4">
+                <h2 className="text-2xl font-bold text-center mb-6">How To Proceed</h2>
+                
+                <div className="space-y-4 mb-6">
+                    <div className="flex items-start">
+                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">1</span>
+                        <p className="text-gray-700">Open WhatsApp on your phone</p>
+                    </div>
+                    <div className="flex items-start">
+                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">2</span>
+                        <p className="text-gray-700">Tap Menu ⋮ or Settings ⚙️ and attached linked devices</p>
+                    </div>
+                    <div className="flex items-start">
+                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">3</span>
+                        <p className="text-gray-700">Tap on Link a Device</p>
+                    </div>
+                    <div className="flex items-start">
+                        <span className="bg-blue-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm font-bold mr-3 mt-1">4</span>
+                        <p className="text-gray-700">Point your phone on this view to capture the code</p>
+                    </div>
+                </div>
+
+                <div className="flex justify-center mb-6">
+                    <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center">
+                        <QrCode size={64} className="text-gray-400" />
+                        <div className="absolute bg-white rounded-full p-2">
+                            <MessageCircle size={24} className="text-green-500" />
+                        </div>
+                    </div>
+                </div>
+
+                <p className="text-center text-blue-500 mb-6">Scan this QR code</p>
+
+                <div className="text-center">
+                    <h3 className="font-semibold text-gray-800 mb-2">What you will get</h3>
+                    <p className="text-sm text-gray-600">
+                        Direct access to {customer.name}'s WhatsApp chat with the design details ready to send.
+                    </p>
+                </div>
+
+                <div className="flex justify-center mt-6">
+                    <button
+                        onClick={onClose}
+                        className="px-6 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors"
+                    >
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default CustomerDetails;
+</file>
+
+<file path="src/components/CustomerList.jsx">
+import React, { useState, useEffect } from 'react';
+import { Search, Plus, MessageCircle, Edit, Trash2, Upload, Filter } from 'lucide-react';
+
+const CustomerList = ({ onCustomerSelect }) => {
+    const [customers, setCustomers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [filteredCustomers, setFilteredCustomers] = useState([]);
+
+    useEffect(() => {
+        loadCustomers();
+    }, []);
+
+    useEffect(() => {
+        setFilteredCustomers(
+            customers.filter(customer =>
+                customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                customer.phone.includes(searchTerm) ||
+                customer.email.toLowerCase().includes(searchTerm.toLowerCase())
+            )
+        );
+    }, [customers, searchTerm]);
+
+    const loadCustomers = async () => {
+        try {
+            const result = await window.electronAPI.getCustomers();
+            if (result.success) {
+                setCustomers(result.data);
+            } else {
+                console.error('Error loading customers:', result.error);
+            }
+        } catch (error) {
+            console.error('Error loading customers:', error);
+        }
+    };
+
+    const handleAddCustomer = async (customerData) => {
+        try {
+            const result = await window.electronAPI.addCustomer(customerData);
+            if (result.success) {
+                loadCustomers();
+                setShowAddModal(false);
+            } else {
+                console.error('Error adding customer:', result.error);
+                alert('Error adding customer. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error adding customer:', error);
+            alert('Error adding customer. Please try again.');
+        }
+    };
+
+    const handleCSVUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // Handle CSV upload logic
+            console.log('CSV file selected:', file);
+        }
+    };
+
+    return (
+        <div className="p-6 max-w-6xl mx-auto">
+            {/* Header with breadcrumb */}
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+                <div>
+                    <div className="flex items-center text-sm text-gray-500 mb-2">
+                        <span className="hover:text-blue-500 cursor-pointer">Dashboard</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mx-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        <span className="text-blue-500">Customers</span>
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800">Customer Management</h1>
+                    <p className="text-gray-600 text-sm mt-1">View and manage your customer database</p>
+                </div>
+                
+                <div className="mt-4 md:mt-0 flex space-x-3">
+                    <label className="bg-white border border-gray-200 text-gray-700 px-4 py-2 rounded-md hover:bg-gray-50 transition-colors cursor-pointer flex items-center shadow-sm">
+                        <Upload size={18} className="mr-1.5 text-gray-500" />
+                        Import CSV
+                        <input
+                            type="file"
+                            accept=".csv,.xlsx,.xls"
+                            onChange={handleCSVUpload}
+                            className="hidden"
+                        />
+                    </label>
+                    <button
+                        onClick={() => setShowAddModal(true)}
+                        className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-md flex items-center text-sm font-medium transition-colors shadow-sm"
+                    >
+                        <Plus size={18} className="mr-1.5" />
+                        Add Customer
+                    </button>
+                </div>
+            </div>
+
+            {/* Search and Filter */}
+            <div className="bg-white rounded-lg shadow-sm p-4 mb-6 border border-gray-100">
+                <div className="flex flex-col md:flex-row md:items-center space-y-3 md:space-y-0 md:space-x-4">
+                    <div className="flex-1 relative">
+                        <input
+                            type="text"
+                            placeholder="Search customers by name, phone or email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 shadow-sm"
+                        />
+                        <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            <Search className="text-gray-400" size={18} />
+                        </div>
+                    </div>
+                    
+                    <button className="flex items-center bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-md transition-colors">
+                        <Filter size={18} className="mr-1.5" />
+                        Filters
+                    </button>
+                </div>
+            </div>
+
+            {/* Customer Table */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden">
+                <div className="border-b border-gray-100 bg-gray-50 py-3 px-5">
+                    <div className="flex items-center justify-between">
+                        <h2 className="font-semibold text-gray-800">Customer List</h2>
+                        <div className="text-sm text-gray-600">
+                            Showing {filteredCustomers.length} customers
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="overflow-x-auto">
+                    <table className="w-full">
+                        <thead className="bg-gray-50 border-b border-gray-100">
+                            <tr>
+                                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Customer
+                                </th>
+                                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Contact
+                                </th>
+                                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Designs Shared
+                                </th>
+                                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Pending Amount
+                                </th>
+                                <th className="px-6 py-3.5 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                    Actions
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody className="bg-white divide-y divide-gray-100">
+                            {filteredCustomers.length > 0 ? (
+                                filteredCustomers.map((customer) => (
+                                    <tr key={customer.id} className="hover:bg-blue-50 transition-colors cursor-pointer" onClick={() => onCustomerSelect(customer)}>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center text-white font-medium shadow-sm">
+                                                    {customer.name.charAt(0).toUpperCase()}
+                                                </div>
+                                                <div className="ml-4">
+                                                    <div className="text-sm font-medium text-gray-900">
+                                                        {customer.name}
+                                                    </div>
+                                                    <div className="text-xs text-gray-500 mt-0.5">
+                                                        {customer.email || 'No email provided'}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                                                </svg>
+                                                <div className="text-sm text-gray-900">{customer.phone || 'No phone'}</div>
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 border border-blue-100">
+                                                {customer.invoice_count || 0} designs
+                                            </span>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="text-sm font-medium text-gray-900">
+                                                ₹{customer.pending_amount || 0}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                                            <div className="flex space-x-2">
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        onCustomerSelect(customer);
+                                                    }}
+                                                    className="text-blue-600 hover:text-blue-900"
+                                                >
+                                                    View
+                                                </button>
+                                                <button 
+                                                    className="text-green-600 hover:text-green-900"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <MessageCircle size={16} />
+                                                </button>
+                                                <button 
+                                                    className="text-gray-600 hover:text-gray-900"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <Edit size={16} />
+                                                </button>
+                                                <button 
+                                                    className="text-red-600 hover:text-red-900"
+                                                    onClick={(e) => e.stopPropagation()}
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                ))
+                            ) : (
+                                <tr>
+                                    <td colSpan="5" className="px-6 py-10 text-center">
+                                        <div className="flex flex-col items-center">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-300 mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                                            </svg>
+                                            <p className="text-gray-500 text-lg font-medium">No customers found</p>
+                                            <p className="text-gray-400 text-sm mt-1">Add a new customer to get started</p>
+                                            <button 
+                                                onClick={() => setShowAddModal(true)}
+                                                className="mt-4 bg-blue-50 text-blue-600 hover:bg-blue-100 px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center"
+                                            >
+                                                <Plus size={16} className="mr-1.5" />
+                                                Add Customer
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            {/* Add Customer Modal */}
+            {showAddModal && (
+                <AddCustomerModal
+                    onClose={() => setShowAddModal(false)}
+                    onAdd={handleAddCustomer}
+                />
+            )}
+        </div>
+    );
+};
+
+// Add Customer Modal Component
+const AddCustomerModal = ({ onClose, onAdd }) => {
+    const [formData, setFormData] = useState({
+        name: '',
+        phone: '',
+        email: ''
+    });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        onAdd(formData);
+        setFormData({ name: '', phone: '', email: '' });
+    };
+
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+            <div className="bg-white rounded-lg p-6 w-96">
+                <h2 className="text-xl font-bold mb-4">Add New Customer</h2>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Customer Name *
+                        </label>
+                        <input
+                            type="text"
+                            value={formData.name}
+                            onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Phone Number *
+                        </label>
+                        <input
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            required
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Email
+                        </label>
+                        <input
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
+                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                    </div>
+                    <div className="flex justify-end space-x-3 mt-6">
+                        <button
+                            type="button"
+                            onClick={onClose}
+                            className="px-4 py-2 text-gray-700 border border-gray-300 rounded-md hover:bg-gray-50"
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                        >
+                            Add Customer
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    );
+};
+
+export default CustomerList;
+</file>
+
+<file path="src/components/Home.jsx">
+import React, { useState } from 'react';
+import { Upload, Plus, DollarSign, Package, Image, Users } from 'lucide-react';
+import { nanoid } from 'nanoid';
+
+const Home = () => {
+    const [formData, setFormData] = useState({
+        designName: '',
+        designCode: '',
+        category: '',
+        price: '',
+        image: null
+    });
+
+    const [previewImage, setPreviewImage] = useState(null);
+
+    const handleInputChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setFormData(prev => ({
+                ...prev,
+                image: file
+            }));
+            
+            // Create preview
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setPreviewImage(e.target.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        
+        const designData = {
+            code: formData.designCode,
+            name: formData.designName,
+            category: formData.category,
+            price: parseFloat(formData.price),
+            imagePath: formData.image ? formData.image.name : null,
+            uniqueCode: nanoid(8)
+        };
+
+        try {
+            // Add design to database
+            const result = await window.electronAPI.addDesign(designData);
+            
+            if (result.success) {
+                // Reset form
+                setFormData({
+                    designName: '',
+                    designCode: '',
+                    category: '',
+                    price: '',
+                    image: null
+                });
+                setPreviewImage(null);
+                
+                alert('Design added successfully!');
+            } else {
+                throw new Error(result.error || 'Failed to add design');
+            }
+        } catch (error) {
+            console.error('Error adding design:', error);
+            alert('Error adding design. Please try again.');
+        }
+    };
+
+    return (
+        <div className="p-6 max-w-6xl mx-auto">
+            {/* Header with breadcrumb */}
+            <div className="flex flex-col md:flex-row md:justify-between md:items-center mb-6">
+                <div>
+                    <div className="flex items-center text-sm text-gray-500 mb-2">
+                        <span className="hover:text-blue-500 cursor-pointer">Dashboard</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mx-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        </svg>
+                        <span className="text-blue-500">Add New Design</span>
+                    </div>
+                    <h1 className="text-2xl font-bold text-gray-800">Add New Design</h1>
+                    <p className="text-gray-600 text-sm mt-1">Create and manage your design catalog</p>
+                </div>
+                
+                <div className="mt-4 md:mt-0 flex space-x-3">
+                    <button className="bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 px-4 py-2 rounded-md flex items-center text-sm font-medium transition-colors shadow-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                        </svg>
+                        Back
+                    </button>
+                    <button className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 py-2 rounded-md flex items-center text-sm font-medium transition-colors shadow-sm">
+                        <Upload size={16} className="mr-1.5" />
+                        Import Designs
+                    </button>
+                </div>
+            </div>
+
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-7">
+                <div className="bg-white rounded-lg shadow-sm p-5 hover:shadow-md transition-shadow border border-gray-100">
+                    <div className="flex items-center">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center mr-4">
+                            <Package className="text-blue-500" size={22} />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Total Designs</p>
+                            <div className="flex items-end mt-1">
+                                <p className="text-2xl font-bold text-gray-800 leading-none">150</p>
+                                <span className="text-xs text-green-500 font-medium ml-2 mb-1 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                    </svg>
+                                    12%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-50">
+                        <div className="flex justify-between items-center text-xs">
+                            <span className="text-gray-500">This Week</span>
+                            <span className="font-medium text-gray-800">+8 designs</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow-sm p-5 hover:shadow-md transition-shadow border border-gray-100">
+                    <div className="flex items-center">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-green-50 to-green-100 flex items-center justify-center mr-4">
+                            <DollarSign className="text-green-500" size={22} />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">This Month Revenue</p>
+                            <div className="flex items-end mt-1">
+                                <p className="text-2xl font-bold text-gray-800 leading-none">₹25,000</p>
+                                <span className="text-xs text-green-500 font-medium ml-2 mb-1 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                    </svg>
+                                    8.5%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-50">
+                        <div className="flex justify-between items-center text-xs">
+                            <span className="text-gray-500">Last Month</span>
+                            <span className="font-medium text-gray-800">₹23,100</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div className="bg-white rounded-lg shadow-sm p-5 hover:shadow-md transition-shadow border border-gray-100">
+                    <div className="flex items-center">
+                        <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 flex items-center justify-center mr-4">
+                            <Users className="text-purple-500" size={22} />
+                        </div>
+                        <div>
+                            <p className="text-sm font-medium text-gray-500">Active Customers</p>
+                            <div className="flex items-end mt-1">
+                                <p className="text-2xl font-bold text-gray-800 leading-none">45</p>
+                                <span className="text-xs text-green-500 font-medium ml-2 mb-1 flex items-center">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 mr-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                                    </svg>
+                                    4%
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div className="mt-4 pt-4 border-t border-gray-50">
+                        <div className="flex justify-between items-center text-xs">
+                            <span className="text-gray-500">New This Week</span>
+                            <span className="font-medium text-gray-800">+3 customers</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {/* Design Form */}
+            <div className="bg-white rounded-lg shadow-sm border border-gray-100">
+                <form onSubmit={handleSubmit}>
+                    <div className="p-5 border-b border-gray-100 bg-gray-50 rounded-t-lg">
+                        <div className="flex items-center">
+                            <div className="w-10 h-10 rounded-lg bg-blue-100 flex items-center justify-center">
+                                <Package className="text-blue-500" size={20} />
+                            </div>
+                            <div className="ml-3">
+                                <h2 className="text-lg font-semibold text-gray-800">Design Information</h2>
+                                <p className="text-sm text-gray-500">Enter the details of your new design</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-8">
+                        {/* Left Column */}
+                        <div className="space-y-5">
+                            <div>
+                                <label className="flex justify-between text-sm font-medium text-gray-700 mb-1.5">
+                                    <span>Design Name <span className="text-red-500">*</span></span>
+                                    <span className="text-blue-500 text-xs">Design name suggestions</span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        name="designName"
+                                        value={formData.designName}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 shadow-sm pl-9"
+                                        placeholder="Enter design name"
+                                        required
+                                    />
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1 pl-1">Enter a descriptive name for your design</p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                    Design Code <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="text"
+                                        name="designCode"
+                                        value={formData.designCode}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 shadow-sm pl-9"
+                                        placeholder="Enter design code"
+                                        required
+                                    />
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1 pl-1">A unique code to identify this design</p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                    Category <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <select
+                                        name="category"
+                                        value={formData.category}
+                                        onChange={handleInputChange}
+                                        className="w-full px-3 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 shadow-sm appearance-none bg-white pl-9"
+                                        required
+                                    >
+                                        <option value="">Select category</option>
+                                        <option value="ethnic">Ethnic Wear</option>
+                                        <option value="casual">Casual Wear</option>
+                                        <option value="formal">Formal Wear</option>
+                                        <option value="party">Party Wear</option>
+                                        <option value="wedding">Wedding Collection</option>
+                                    </select>
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                    <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                        </svg>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1 pl-1">Select the most appropriate category</p>
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                    Price (₹) <span className="text-red-500">*</span>
+                                </label>
+                                <div className="relative">
+                                    <input
+                                        type="number"
+                                        name="price"
+                                        value={formData.price}
+                                        onChange={handleInputChange}
+                                        className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-100 focus:border-blue-400 shadow-sm"
+                                        placeholder="Enter price"
+                                        min="0"
+                                        step="0.01"
+                                        required
+                                    />
+                                    <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                                        <span className="text-gray-500 font-medium">₹</span>
+                                    </div>
+                                </div>
+                                <p className="text-xs text-gray-500 mt-1 pl-1">Enter the retail price for this design</p>
+                            </div>
+                            
+                            <div className="pt-2 border-t border-gray-100 mt-7">
+                                <div className="bg-blue-50 rounded-md px-4 py-3 flex">
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-blue-500 mr-2 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    <div>
+                                        <p className="text-sm font-medium text-blue-700">Need help with design details?</p>
+                                        <p className="text-xs text-blue-600 mt-1">Our team can help you optimize your design catalog for better sales. Contact support for assistance.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* Right Column */}
+                        <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                                Design Image <span className="text-gray-500 text-xs">(Optional)</span>
+                            </label>
+                            <div className="border-2 border-dashed border-gray-200 bg-gray-50 rounded-lg p-6 text-center h-[260px] flex flex-col items-center justify-center hover:bg-gray-100 hover:border-gray-300 transition-colors">
+                                {previewImage ? (
+                                    <div className="space-y-4 w-full">
+                                        <div className="relative w-full max-w-[200px] mx-auto">
+                                            <img
+                                                src={previewImage}
+                                                alt="Design preview"
+                                                className="max-w-full h-36 object-contain mx-auto rounded-lg border p-2 bg-white shadow-sm"
+                                            />
+                                            <div className="absolute -top-2 -right-2">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => {
+                                                        setPreviewImage(null);
+                                                        setFormData(prev => ({ ...prev, image: null }));
+                                                    }}
+                                                    className="bg-red-100 text-red-500 hover:bg-red-200 hover:text-red-700 p-1.5 rounded-full"
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <p className="text-gray-600 text-sm">Image uploaded successfully</p>
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                document.getElementById('design-image-upload').click();
+                                            }}
+                                            className="text-blue-500 hover:text-blue-700 text-sm font-medium mx-auto bg-blue-50 px-3 py-1 rounded-md hover:bg-blue-100 transition-colors"
+                                        >
+                                            Change Image
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="space-y-3">
+                                        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto">
+                                            <Image size={32} className="text-blue-500" />
+                                        </div>
+                                        <div>
+                                            <p className="text-gray-700 font-medium">Drag and drop image here</p>
+                                            <p className="text-gray-500 text-sm mt-1">- or -</p>
+                                            <label className="cursor-pointer inline-block mt-2 bg-white border border-gray-300 rounded-md px-4 py-1.5 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors shadow-sm">
+                                                Browse Files
+                                                <input
+                                                    id="design-image-upload"
+                                                    type="file"
+                                                    accept="image/*"
+                                                    onChange={handleImageUpload}
+                                                    className="hidden"
+                                                />
+                                            </label>
+                                            <p className="text-gray-500 text-xs mt-3">PNG, JPG, GIF up to 10MB</p>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                            
+                            <div className="mt-5 bg-gray-50 rounded-md p-4 border border-gray-100">
+                                <h3 className="font-medium text-gray-800 text-sm">Image Guidelines:</h3>
+                                <ul className="mt-2 space-y-1.5 text-xs text-gray-600">
+                                    <li className="flex items-start">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-green-500 mr-1.5 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Use high-resolution images (min 800×800 pixels)
+                                    </li>
+                                    <li className="flex items-start">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-green-500 mr-1.5 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Clear background with proper lighting
+                                    </li>
+                                    <li className="flex items-start">
+                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-3.5 w-3.5 text-green-500 mr-1.5 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                        </svg>
+                                        Show design from multiple angles if possible
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Submit Button */}
+                    <div className="mt-8 pt-5 border-t border-gray-100 flex justify-between items-center p-6 bg-gray-50 rounded-b-lg">
+                        <div className="text-sm text-gray-500">
+                            <span className="flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1.5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Fields marked with <span className="text-red-500">*</span> are required
+                            </span>
+                        </div>
+                        <div className="flex space-x-3">
+                            <button
+                                type="button"
+                                className="bg-white border border-gray-200 text-gray-700 px-5 py-2.5 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium shadow-sm"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                className="bg-white border border-gray-200 text-gray-700 px-5 py-2.5 rounded-md hover:bg-gray-50 transition-colors text-sm font-medium shadow-sm"
+                            >
+                                Save as Draft
+                            </button>
+                            <button
+                                type="submit"
+                                className="bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-5 py-2.5 rounded-md transition-colors flex items-center text-sm font-medium shadow-sm"
+                            >
+                                <Plus size={16} className="mr-1.5" />
+                                Add Design
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            
+            <div className="mt-5 mb-3 text-center text-xs text-gray-500">
+                © 2023 Vyapar App. All rights reserved.
+            </div>
+        </div>
+    );
+};
+
+export default Home;
+</file>
+
+<file path="src/components/InvoiceGenerator.jsx">
+import React, { useState, useEffect } from 'react';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
+import { MessageSquare, FileText, Check, X } from 'lucide-react';
+import { nanoid } from 'nanoid';
+
+const InvoiceGenerator = ({ customer, onClose }) => {
+  const [designs, setDesigns] = useState([]);
+  const [selectedDesign, setSelectedDesign] = useState(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [invoiceData, setInvoiceData] = useState(null);
+  const [showSuccess, setShowSuccess] = useState(false);
+
+  useEffect(() => {
+    loadDesigns();
+  }, []);
+
+  const loadDesigns = async () => {
+    try {
+      const result = await window.electronAPI.getDesigns();
+      if (result.success) {
+        setDesigns(result.data);
+      }
+    } catch (error) {
+      console.error('Error loading designs:', error);
+    }
+  };
+
+  const generateInvoice = async () => {
+    if (!selectedDesign) return;
+
+    setIsGenerating(true);
+    try {
+      // Get customer's pending balance
+      const invoicesResult = await window.electronAPI.getCustomerInvoices(customer.id);
+      const pendingBalance = invoicesResult.success 
+        ? invoicesResult.data.filter(inv => !inv.is_paid).reduce((sum, inv) => sum + inv.amount, 0)
+        : 0;
+
+      // Create new invoice
+      const invoiceNumber = `INV-${Date.now()}-${nanoid(6)}`;
+      const newInvoice = {
+        invoiceNumber,
+        customerId: customer.id,
+        designId: selectedDesign.id,
+        amount: selectedDesign.price,
+        pendingBalance
+      };
+
+      const result = await window.electronAPI.createInvoice(newInvoice);
+      
+      if (result.success) {
+        setInvoiceData({
+          ...newInvoice,
+          id: result.data.lastInsertRowid,
+          design: selectedDesign,
+          customer: customer,
+          totalAmount: selectedDesign.price + pendingBalance
+        });
+      }
+    } catch (error) {
+      console.error('Error generating invoice:', error);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const shareToWhatsApp = async () => {
+    if (!invoiceData) return;
+
+    try {
+      const result = await window.electronAPI.shareToWhatsApp(
+        customer,
+        invoiceData.design,
+        invoiceData
+      );
+
+      if (result.success) {
+        setShowSuccess(true);
+        setTimeout(() => {
+          setShowSuccess(false);
+          onClose();
+        }, 2000);
+      }
+    } catch (error) {
+      console.error('Error sharing to WhatsApp:', error);
+    }
+  };
+
+  const generatePDF = async () => {
+    if (!invoiceData) return;
+
+    try {
+      // This would typically generate a PDF using jsPDF
+      // For now, we'll show a success message
+      console.log('Generating PDF for invoice:', invoiceData);
+      alert('PDF generation feature will be implemented');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+    }
+  };
+
+  if (showSuccess) {
+    return (
+      <Dialog open={true} onOpenChange={() => {}}>
+        <DialogContent className="text-center">
+          <div className="mx-auto w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mb-4">
+            <Check className="h-6 w-6 text-green-600" />
+          </div>
+          <DialogTitle className="text-green-600">Success!</DialogTitle>
+          <p className="text-gray-600 mt-2">
+            Invoice shared to WhatsApp successfully
+          </p>
+        </DialogContent>
+      </Dialog>
+    );
+  }
+
+  return (
+    <Dialog open={true} onOpenChange={onClose}>
+      <DialogContent className="max-w-2xl">
+        <DialogHeader>
+          <DialogTitle>Generate Invoice for {customer.name}</DialogTitle>
+        </DialogHeader>
+
+        <div className="space-y-6">
+          {/* Design Selection */}
+          <div>
+            <h3 className="text-lg font-semibold mb-3">Select Design</h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-60 overflow-y-auto">
+              {designs.map((design) => (
+                <div
+                  key={design.id}
+                  onClick={() => setSelectedDesign(design)}
+                  className={`p-4 border rounded-lg cursor-pointer transition-colors ${
+                    selectedDesign?.id === design.id
+                      ? 'border-blue-500 bg-blue-50'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <div className="flex items-center space-x-3">
+                    {design.image_path && (
+                      <img
+                        src={design.image_path}
+                        alt={design.design_name}
+                        className="w-12 h-12 object-cover rounded"
+                      />
+                    )}
+                    <div>
+                      <h4 className="font-medium">{design.design_name}</h4>
+                      <p className="text-sm text-gray-500">{design.design_code}</p>
+                      <p className="text-sm font-semibold">₹{design.price}</p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Invoice Preview */}
+          {invoiceData && (
+            <div className="bg-gray-50 p-4 rounded-lg">
+              <h3 className="text-lg font-semibold mb-3">Invoice Preview</h3>
+              <div className="space-y-2">
+                <div className="flex justify-between">
+                  <span>Invoice Number:</span>
+                  <span className="font-medium">{invoiceData.invoiceNumber}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Customer:</span>
+                  <span className="font-medium">{customer.name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Design:</span>
+                  <span className="font-medium">{invoiceData.design.design_name}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Price:</span>
+                  <span className="font-medium">₹{invoiceData.design.price}</span>
+                </div>
+                {invoiceData.pendingBalance > 0 && (
+                  <div className="flex justify-between text-orange-600">
+                    <span>Previous Balance:</span>
+                    <span className="font-medium">₹{invoiceData.pendingBalance}</span>
+                  </div>
+                )}
+                <div className="flex justify-between text-lg font-bold border-t pt-2">
+                  <span>Total Amount:</span>
+                  <span>₹{invoiceData.totalAmount}</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Actions */}
+          <div className="flex justify-between">
+            <Button variant="outline" onClick={onClose}>
+              Cancel
+            </Button>
+            
+            <div className="flex space-x-2">
+              {!invoiceData ? (
+                <Button
+                  onClick={generateInvoice}
+                  disabled={!selectedDesign || isGenerating}
+                >
+                  {isGenerating ? 'Generating...' : 'Generate Invoice'}
+                </Button>
+              ) : (
+                <>
+                  <Button variant="outline" onClick={generatePDF}>
+                    <FileText className="h-4 w-4 mr-2" />
+                    PDF
+                  </Button>
+                  <Button onClick={shareToWhatsApp}>
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    Share WhatsApp
+                  </Button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
+export default InvoiceGenerator;
+</file>
+
+<file path="src/components/Sidebar.jsx">
+import React, { useState } from 'react';
+import { Home, Users, Settings, ChevronLeft, ChevronRight, Package, FileText, ShoppingBag, Landmark, Share2, Wrench, CreditCard, Plus, Menu, Activity, PieChart } from 'lucide-react';
+
+const Sidebar = ({ currentPage, onPageChange, collapsed, onToggleCollapse }) => {
+    const [hoveredMenu, setHoveredMenu] = useState(null);
+
+    const menuItems = [
+        { id: 'home', icon: Home, label: 'Dashboard', description: 'Overview' },
+        { id: 'customers', icon: Users, label: 'Parties', description: 'Customers & Vendors' },
+        { id: 'items', icon: Package, label: 'Items', description: 'Products & Services' },
+        { id: 'designs', icon: FileText, label: 'Designs', description: 'View All Designs' },
+        { id: 'sale', icon: ShoppingBag, label: 'Sales', description: 'Invoices & Orders' },
+        { id: 'purchase', icon: ShoppingBag, label: 'Purchase', description: 'Bills & Payments' },
+        { id: 'cash', icon: Landmark, label: 'Banking', description: 'Cash & Bank' },
+        { id: 'reports', icon: PieChart, label: 'Reports', description: 'Business Analytics' },
+        { id: 'settings', icon: Settings, label: 'Settings', description: 'App Settings' }
+    ];
+
+    // Secondary menu items at bottom
+    const secondaryMenuItems = [
+        { id: 'help', icon: Share2, label: 'Help & Support' },
+        { id: 'tools', icon: Wrench, label: 'Business Tools' }
+    ];
+
+    return (
+        <div 
+            className={`sidebar ${collapsed ? 'collapsed' : 'expanded'}`}
+        >
+            {/* Header */}
+            <div className={`flex items-center ${collapsed ? 'justify-center px-2 py-5' : 'justify-between px-5 py-4'} border-b border-[#2a3448]`}>
+                {!collapsed ? (
+                    <div className="flex items-center">
+                        <div className="w-9 h-9 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mr-3 shadow-sm">
+                            <FileText size={18} className="text-white" />
+                        </div>
+                        <h1 className="text-lg font-semibold text-white">Vyapar App</h1>
+                    </div>
+                ) : (
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg flex items-center justify-center shadow-md">
+                        <FileText size={20} className="text-white" />
+                    </div>
+                )}
+                
+                {!collapsed && (
+                    <button
+                        onClick={onToggleCollapse}
+                        className="p-1.5 hover:bg-[#2a3448] rounded-md transition-colors"
+                    >
+                        <ChevronLeft size={20} className="text-gray-400" />
+                    </button>
+                )}
+            </div>
+
+            {/* Collapse Toggle Button (when collapsed) */}
+            {collapsed && (
+                <div className="flex justify-center mt-4">
+                    <button
+                        onClick={onToggleCollapse}
+                        className="w-9 h-9 bg-[#2a3448] rounded-md flex items-center justify-center hover:bg-[#344058] transition-colors"
+                    >
+                        <Menu size={18} className="text-gray-400" />
+                    </button>
+                </div>
+            )}
+
+            {/* Quick Action Button */}
+            {collapsed ? (
+                <div className="flex justify-center mt-5 mb-2">
+                    <button className="w-10 h-10 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 rounded-md flex items-center justify-center transition-colors shadow-md">
+                        <Plus size={20} className="text-white" />
+                    </button>
+                </div>
+            ) : (
+                <div className="px-4 py-3">
+                    <button className="w-full bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white py-2.5 px-4 rounded-md flex items-center justify-center transition-colors shadow-sm font-medium">
+                        <Plus size={17} className="mr-1.5" /> Create New
+                    </button>
+                </div>
+            )}
+
+            {/* Menu Items */}
+            <nav className="mt-3 overflow-y-auto flex-grow pt-1 px-2">
+                <div className={`${!collapsed ? 'px-2 py-1' : ''}`}>
+                    {!collapsed && <p className="text-[11px] uppercase font-medium text-gray-500 mb-2 ml-1">MAIN MENU</p>}
+                    {menuItems.map((item) => (
+                        <button
+                            key={item.id}
+                            onClick={() => onPageChange(item.id)}
+                            onMouseEnter={() => setHoveredMenu(item.id)}
+                            onMouseLeave={() => setHoveredMenu(null)}
+                            className={`w-full flex items-center rounded-md mb-1.5 ${
+                                collapsed 
+                                    ? 'justify-center h-10 relative group'
+                                    : 'px-3 py-2 text-left'
+                            } transition-all ${
+                                currentPage === item.id 
+                                    ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white' 
+                                    : 'hover:bg-[#2a3448] text-gray-300'
+                            }`}
+                        >
+                            <item.icon 
+                                size={collapsed ? 18 : 17} 
+                                strokeWidth={1.75}
+                                className={`flex-shrink-0 ${
+                                    currentPage === item.id || hoveredMenu === item.id
+                                        ? 'text-white' 
+                                        : 'text-gray-400'
+                                }`} 
+                            />
+                            
+                            {!collapsed && (
+                                <div className="ml-3 text-sm">
+                                    <div className={`font-medium ${
+                                        currentPage === item.id ? 'text-white' : 'text-gray-300'
+                                    }`}>{item.label}</div>
+                                    <div className="text-[11px] text-gray-400">{item.description}</div>
+                                </div>
+                            )}
+                            
+                            {/* Tooltip for collapsed mode */}
+                            {collapsed && (
+                                <div className="absolute left-full ml-2 w-auto p-2 rounded-md bg-[#1e2532] shadow-lg border border-[#2a3448] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 whitespace-nowrap z-50 text-left">
+                                    <div className="font-medium text-sm text-white">{item.label}</div>
+                                    <div className="text-[11px] text-gray-400">{item.description}</div>
+                                </div>
+                            )}
+                        </button>
+                    ))}
+                </div>
+                
+                {/* Secondary Menu */}
+                {!collapsed && (
+                    <div className="px-2 pt-4 pb-2">
+                        <p className="text-[11px] uppercase font-medium text-gray-500 mb-2 ml-1">OTHER</p>
+                        {secondaryMenuItems.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => onPageChange(item.id)}
+                                className="w-full flex items-center px-3 py-2 text-left hover:bg-[#2a3448] rounded-md mb-1.5 transition-colors"
+                            >
+                                <item.icon size={17} strokeWidth={1.75} className="flex-shrink-0 text-gray-400" />
+                                <div className="ml-3 font-medium text-sm text-gray-300">{item.label}</div>
+                            </button>
+                        ))}
+                    </div>
+                )}
+                
+                {/* Show icons for secondary menu when collapsed */}
+                {collapsed && (
+                    <div className="px-1.5 pt-4 pb-2">
+                        {secondaryMenuItems.map((item) => (
+                            <button
+                                key={item.id}
+                                onClick={() => onPageChange(item.id)}
+                                className="w-full flex items-center justify-center h-10 hover:bg-[#2a3448] rounded-md mb-1.5 transition-colors group relative"
+                            >
+                                <item.icon size={18} strokeWidth={1.75} className="text-gray-400" />
+                                
+                                {/* Tooltip for collapsed mode */}
+                                <div className="absolute left-full ml-2 p-2 rounded-md bg-[#1e2532] shadow-lg border border-[#2a3448] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 whitespace-nowrap z-50">
+                                    <div className="text-sm font-medium text-white">{item.label}</div>
+                                </div>
+                            </button>
+                        ))}
+                    </div>
+                )}
+            </nav>
+
+            {/* Footer */}
+            <div className={`mt-auto ${collapsed ? 'px-1.5 pb-3 pt-1' : 'px-4 pb-4 pt-2'}`}>
+                <div className={`${!collapsed ? 'border-t border-[#2a3448] pt-3' : ''}`}>
+                    {collapsed ? (
+                        <div className="flex justify-center">
+                            <div className="w-10 h-10 bg-[#2a3448] rounded-md flex items-center justify-center group relative">
+                                <Activity size={16} className="text-yellow-400" />
+                                
+                                {/* Tooltip for trial status when collapsed */}
+                                <div className="absolute left-full ml-2 p-2 rounded-md bg-[#1e2532] shadow-lg border border-[#2a3448] opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 whitespace-nowrap z-50">
+                                    <div className="text-xs font-medium text-white">7 days trial left</div>
+                                    <div className="w-full bg-[#344058] rounded-full h-1.5 mt-1.5">
+                                        <div className="bg-yellow-400 h-1.5 rounded-full" style={{ width: '30%' }}></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <div>
+                            <div className="bg-[#2a3448] p-3 rounded-md mb-2.5">
+                                <div className="flex items-center justify-between mb-1">
+                                    <div className="text-xs font-medium text-gray-300">7 days Free Trial left</div>
+                                    <div className="bg-yellow-100 text-yellow-800 text-[10px] px-1.5 py-0.5 rounded">30%</div>
+                                </div>
+                                <div className="w-full bg-[#344058] rounded-full h-1.5">
+                                    <div className="bg-yellow-400 h-1.5 rounded-full" style={{ width: '30%' }}></div>
+                                </div>
+                            </div>
+                            <button className="mt-1 w-full bg-gradient-to-r from-yellow-500 to-amber-500 text-white py-2 px-3 rounded-md text-sm font-medium hover:from-yellow-600 hover:to-amber-600 transition-colors flex items-center justify-center shadow-sm">
+                                <CreditCard size={14} className="mr-1.5" />
+                                Upgrade to Premium
+                            </button>
+                        </div>
+                    )}
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Sidebar;
+</file>
+
+<file path="src/components/ui/button.jsx">
+import React from 'react';
+
+const Button = React.forwardRef(({ 
+  className = '', 
+  variant = 'default', 
+  size = 'default', 
+  disabled = false,
+  children, 
+  ...props 
+}, ref) => {
+  const baseClasses = 'inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none';
+  
+  const variants = {
+    default: 'bg-blue-600 text-white hover:bg-blue-700 focus-visible:ring-blue-500',
+    destructive: 'bg-red-600 text-white hover:bg-red-700 focus-visible:ring-red-500',
+    outline: 'border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:ring-blue-500',
+    secondary: 'bg-gray-100 text-gray-900 hover:bg-gray-200 focus-visible:ring-gray-500',
+    ghost: 'text-gray-700 hover:bg-gray-100 focus-visible:ring-gray-500',
+    link: 'text-blue-600 underline-offset-4 hover:underline focus-visible:ring-blue-500'
+  };
+
+  const sizes = {
+    default: 'h-10 px-4 py-2',
+    sm: 'h-9 px-3 py-1 text-sm',
+    lg: 'h-11 px-8 py-2 text-lg',
+    icon: 'h-10 w-10'
+  };
+
+  const classes = `${baseClasses} ${variants[variant]} ${sizes[size]} ${className}`;
+
+  return (
+    <button
+      className={classes}
+      ref={ref}
+      disabled={disabled}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+});
+
+Button.displayName = 'Button';
+
+export { Button };
+</file>
+
+<file path="src/components/ui/dialog.jsx">
+import React from 'react';
+import { X } from 'lucide-react';
+
+const Dialog = ({ open, onOpenChange, children }) => {
+  if (!open) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div 
+        className="fixed inset-0 bg-black/50" 
+        onClick={() => onOpenChange(false)}
+      />
+      <div className="relative bg-white rounded-lg shadow-lg max-w-md w-full mx-4 max-h-[90vh] overflow-y-auto">
+        {children}
+      </div>
+    </div>
+  );
+};
+
+const DialogContent = React.forwardRef(({ className = '', children, ...props }, ref) => (
+  <div ref={ref} className={`p-6 ${className}`} {...props}>
+    {children}
+  </div>
+));
+DialogContent.displayName = 'DialogContent';
+
+const DialogHeader = React.forwardRef(({ className = '', ...props }, ref) => (
+  <div
+    ref={ref}
+    className={`flex flex-col space-y-1.5 text-center sm:text-left ${className}`}
+    {...props}
+  />
+));
+DialogHeader.displayName = 'DialogHeader';
+
+const DialogTitle = React.forwardRef(({ className = '', ...props }, ref) => (
+  <h3
+    ref={ref}
+    className={`text-lg font-semibold leading-none tracking-tight ${className}`}
+    {...props}
+  />
+));
+DialogTitle.displayName = 'DialogTitle';
+
+const DialogDescription = React.forwardRef(({ className = '', ...props }, ref) => (
+  <p
+    ref={ref}
+    className={`text-sm text-gray-500 ${className}`}
+    {...props}
+  />
+));
+DialogDescription.displayName = 'DialogDescription';
+
+const DialogFooter = React.forwardRef(({ className = '', ...props }, ref) => (
+  <div
+    ref={ref}
+    className={`flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2 ${className}`}
+    {...props}
+  />
+));
+DialogFooter.displayName = 'DialogFooter';
+
+const DialogTrigger = ({ asChild, children, ...props }) => {
+  return React.cloneElement(children, props);
+};
+
+const DialogClose = ({ asChild, children, onClose, ...props }) => {
+  return React.cloneElement(children, {
+    onClick: onClose,
+    ...props
+  });
+};
+
+export {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+  DialogTrigger,
+  DialogClose,
+};
+</file>
+
+<file path="src/components/ui/input.jsx">
+import React from 'react';
+
+const Input = React.forwardRef(({ 
+  className = '', 
+  type = 'text',
+  label,
+  error,
+  ...props 
+}, ref) => {
+  const baseClasses = 'flex h-10 w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent disabled:cursor-not-allowed disabled:opacity-50';
+  
+  const errorClasses = error ? 'border-red-500 focus:ring-red-500' : '';
+  
+  const classes = `${baseClasses} ${errorClasses} ${className}`;
+
+  return (
+    <div className="space-y-1">
+      {label && (
+        <label className="text-sm font-medium text-gray-700">
+          {label}
+        </label>
+      )}
+      <input
+        type={type}
+        className={classes}
+        ref={ref}
+        {...props}
+      />
+      {error && (
+        <p className="text-sm text-red-600">{error}</p>
+      )}
+    </div>
+  );
+});
+
+Input.displayName = 'Input';
+
+export { Input };
+</file>
+
+<file path="src/components/ui/sidebar.jsx">
+// Sidebar UI component
+export default function Sidebar({ children }) {
+  return <aside>{children}</aside>;
+}
+</file>
+
+<file path="src/components/ui/table.jsx">
+import React from 'react';
+
+const Table = React.forwardRef(({ className = '', ...props }, ref) => (
+  <div className="w-full overflow-auto">
+    <table
+      ref={ref}
+      className={`w-full caption-bottom text-sm ${className}`}
+      {...props}
+    />
+  </div>
+));
+Table.displayName = 'Table';
+
+const TableHeader = React.forwardRef(({ className = '', ...props }, ref) => (
+  <thead ref={ref} className={`[&_tr]:border-b ${className}`} {...props} />
+));
+TableHeader.displayName = 'TableHeader';
+
+const TableBody = React.forwardRef(({ className = '', ...props }, ref) => (
+  <tbody
+    ref={ref}
+    className={`[&_tr:last-child]:border-0 ${className}`}
+    {...props}
+  />
+));
+TableBody.displayName = 'TableBody';
+
+const TableFooter = React.forwardRef(({ className = '', ...props }, ref) => (
+  <tfoot
+    ref={ref}
+    className={`bg-gray-50 font-medium [&>tr]:last:border-b-0 ${className}`}
+    {...props}
+  />
+));
+TableFooter.displayName = 'TableFooter';
+
+const TableRow = React.forwardRef(({ className = '', ...props }, ref) => (
+  <tr
+    ref={ref}
+    className={`border-b border-gray-200 hover:bg-gray-50 data-[state=selected]:bg-gray-50 ${className}`}
+    {...props}
+  />
+));
+TableRow.displayName = 'TableRow';
+
+const TableHead = React.forwardRef(({ className = '', ...props }, ref) => (
+  <th
+    ref={ref}
+    className={`h-12 px-4 text-left align-middle font-medium text-gray-700 bg-gray-50 ${className}`}
+    {...props}
+  />
+));
+TableHead.displayName = 'TableHead';
+
+const TableCell = React.forwardRef(({ className = '', ...props }, ref) => (
+  <td
+    ref={ref}
+    className={`p-4 align-middle ${className}`}
+    {...props}
+  />
+));
+TableCell.displayName = 'TableCell';
+
+export {
+  Table,
+  TableHeader,
+  TableBody,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TableCell,
+};
+</file>
+
+<file path="src/database/db.js">
+const Database = require('better-sqlite3');
+const path = require('path');
+const fs = require('fs');
+
+class DatabaseManager {
+    constructor() {
+        const dbPath = path.join(__dirname, '../../data/app.db');
+        this.db = new Database(dbPath);
+        this.initializeDatabase();
+    }
+
+    initializeDatabase() {
+        const schemaPath = path.join(__dirname, 'schema.sql');
+        const schema = fs.readFileSync(schemaPath, 'utf8');
+        this.db.exec(schema);
+    }
+
+    // Design methods
+    addDesign(designData) {
+        const stmt = this.db.prepare(`
+            INSERT INTO designs (design_code, design_name, category, price, image_path, unique_code)
+            VALUES (?, ?, ?, ?, ?, ?)
+        `);
+        return stmt.run(designData.code, designData.name, designData.category, 
+                       designData.price, designData.imagePath, designData.uniqueCode);
+    }
+
+    getDesigns() {
+        return this.db.prepare('SELECT * FROM designs ORDER BY created_at DESC').all();
+    }
+
+    // Customer methods
+    addCustomer(customerData) {
+        const stmt = this.db.prepare(`
+            INSERT INTO customers (name, phone, email)
+            VALUES (?, ?, ?)
+        `);
+        return stmt.run(customerData.name, customerData.phone, customerData.email);
+    }
+
+    getCustomers() {
+        return this.db.prepare(`
+            SELECT c.*, 
+                   COUNT(i.id) as invoice_count,
+                   SUM(CASE WHEN i.is_paid = 0 THEN i.amount ELSE 0 END) as pending_amount
+            FROM customers c
+            LEFT JOIN invoices i ON c.id = i.customer_id
+            GROUP BY c.id
+            ORDER BY c.created_at DESC
+        `).all();
+    }
+
+    // Invoice methods
+    createInvoice(invoiceData) {
+        const stmt = this.db.prepare(`
+            INSERT INTO invoices (invoice_number, customer_id, design_id, amount)
+            VALUES (?, ?, ?, ?)
+        `);
+        return stmt.run(invoiceData.invoiceNumber, invoiceData.customerId, 
+                       invoiceData.designId, invoiceData.amount);
+    }
+
+    getCustomerInvoices(customerId) {
+        return this.db.prepare(`
+            SELECT i.*, d.design_name, d.image_path, d.design_code
+            FROM invoices i
+            JOIN designs d ON i.design_id = d.id
+            WHERE i.customer_id = ?
+            ORDER BY i.created_at DESC
+        `).get(customerId);
+    }
+
+    updateInvoiceStatus(invoiceId, isPaid) {
+        const stmt = this.db.prepare('UPDATE invoices SET is_paid = ? WHERE id = ?');
+        return stmt.run(isPaid ? 1 : 0, invoiceId);
+    }
+}
+
+module.exports = DatabaseManager;
+</file>
+
+<file path="src/database/schema.sql">
+CREATE TABLE IF NOT EXISTS designs (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    design_code TEXT UNIQUE NOT NULL,
+    design_name TEXT NOT NULL,
+    category TEXT NOT NULL,
+    price DECIMAL(10,2) NOT NULL,
+    image_path TEXT,
+    unique_code TEXT UNIQUE NOT NULL,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS customers (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT NOT NULL,
+    phone TEXT NOT NULL,
+    email TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE IF NOT EXISTS invoices (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    invoice_number TEXT UNIQUE NOT NULL,
+    customer_id INTEGER NOT NULL,
+    design_id INTEGER NOT NULL,
+    amount DECIMAL(10,2) NOT NULL,
+    is_paid BOOLEAN DEFAULT 0,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (customer_id) REFERENCES customers(id),
+    FOREIGN KEY (design_id) REFERENCES designs(id)
+);
+</file>
+
+<file path="src/index.css">
+/* Main CSS file for invoice-management-app */
+body { 
+  margin: 0; 
+  font-family: sans-serif; 
+}
+
+/* Fix for sidebar */
+.sidebar {
+  position: fixed;
+  left: 0;
+  top: 0;
+  height: 100%;
+  background-color: #1e2532;
+  color: white;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  transition: width 0.3s ease;
+}
+
+.sidebar.collapsed {
+  width: 70px;
+}
+
+.sidebar.expanded {
+  width: 250px;
+}
+
+/* Fix for main content */
+.main-content {
+  margin-left: 250px;
+  transition: margin-left 0.3s ease;
+}
+
+.main-content.sidebar-collapsed {
+  margin-left: 70px;
+}
+
+/* Utility classes */
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.h-full { height: 100%; }
+.h-screen { height: 100vh; }
+.w-full { width: 100%; }
+.overflow-hidden { overflow: hidden; }
+.overflow-y-auto { overflow-y: auto; }
+.bg-gray-50 { background-color: #f9fafb; }
+.text-white { color: white; }
+.rounded-lg { border-radius: 0.5rem; }
+.shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
+.border-b { border-bottom-width: 1px; }
+.border-gray-200 { border-color: #e5e7eb; }
+.p-6 { padding: 1.5rem; }
+.py-4 { padding-top: 1rem; padding-bottom: 1rem; }
+.px-5 { padding-left: 1.25rem; padding-right: 1.25rem; }
+.py-5 { padding-top: 1.25rem; padding-bottom: 1.25rem; }
+.px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
+.text-lg { font-size: 1.125rem; }
+.font-semibold { font-weight: 600; }
+.mr-3 { margin-right: 0.75rem; }
+
+/* Additional specific styles */
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
+  margin: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.sidebar-item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-item.active {
+  background-color: rgba(59, 130, 246, 0.2);
+}
+
+.sidebar-item-icon {
+  margin-right: 0.75rem;
+}
+
+.flex-1 { flex: 1 1 0%; }
+</file>
+
+<file path="src/main.jsx">
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App.jsx';
+import './index.css';
+
+// Import mock API for development
+import './utils/mockElectronAPI.js';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+</file>
+
+<file path="src/utils/csv-parser.js">
+// CSV parser utility functions
+</file>
+
+<file path="src/utils/pdf-generator.js">
+import jsPDF from 'jspdf';
+
+export class PDFGenerator {
+    static generateInvoice(customer, design, invoice, shopName) {
+        const doc = new jsPDF();
+        
+        // Header
+        doc.setFontSize(20);
+        doc.text(shopName, 20, 20);
+        
+        // Invoice details
+        doc.setFontSize(16);
+        doc.text('TAX INVOICE', 20, 40);
+        
+        doc.setFontSize(12);
+        doc.text(`Invoice No: ${invoice.invoice_number}`, 20, 60);
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 70);
+        
+        // Customer details
+        doc.text('Bill To:', 20, 90);
+        doc.text(customer.name, 20, 100);
+        doc.text(customer.phone, 20, 110);
+        
+        // Design details
+        doc.text('Design Details:', 20, 130);
+        doc.text(`Name: ${design.design_name}`, 20, 140);
+        doc.text(`Code: ${design.design_code}`, 20, 150);
+        doc.text(`Price: ₹${design.price}`, 20, 160);
+        
+        // Add design image if available
+        if (design.image_path) {
+            // Add image logic here
+        }
+        
+        // Total
+        doc.setFontSize(14);
+        doc.text(`Total: ₹${design.price}`, 20, 200);
+        
+        if (invoice.pendingAmount > 0) {
+            doc.text(`Previous Balance: ₹${invoice.pendingAmount}`, 20, 210);
+            doc.text(`Grand Total: ₹${design.price + invoice.pendingAmount}`, 20, 220);
+        }
+        
+        return doc;
+    }
+}
+</file>
+
+<file path="src/utils/whatsapp.js">
+import { shell } from 'electron';
+
+export class WhatsAppManager {
+    static async sendDesignToCustomer(customer, design, invoice) {
+        const message = this.createInvoiceMessage(customer, design, invoice);
+        const whatsappUrl = `https://wa.me/${customer.phone}?text=${encodeURIComponent(message)}`;
+        
+        try {
+            await shell.openExternal(whatsappUrl);
+            return true;
+        } catch (error) {
+            console.error('Error opening WhatsApp:', error);
+            return false;
+        }
+    }
+
+    static createInvoiceMessage(customer, design, invoice) {
+        return `
+Hello ${customer.name},
+
+Here's your design invoice:
+
+🎨 Design: ${design.design_name}
+📝 Code: ${design.design_code}
+💰 Price: ₹${design.price}
+📄 Invoice #: ${invoice.invoice_number}
+
+${invoice.pendingAmount > 0 ? `⚠️ Previous Balance: ₹${invoice.pendingAmount}` : ''}
+
+Thank you for your business!
+        `.trim();
+    }
+}
+</file>
+
+<file path="tailwind.config.js">
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: [
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+</file>
+
+<file path="vite.config.js">
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
+
+export default defineConfig({
+  plugins: [react()],
+  base: './',
+  server: {
+    port: 3000,
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    emptyOutDir: true,
+  },
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, './src'),
+    },
+  },
+});
+</file>
+
+</files>

@@ -1,23 +1,22 @@
 // Electron main process
 const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
 const path = require('path');
-const isDev = process.env.NODE_ENV === 'development';
-const DatabaseManager = require('../src/database/db');
+const isDev = !app.isPackaged;
+const fs = require('fs');
+const Database = require('better-sqlite3');
 
 let mainWindow;
 let dbManager;
 
 function createWindow() {
     mainWindow = new BrowserWindow({
-        width: 1400,
-        height: 900,
+        width: 1200,
+        height: 800,
         webPreferences: {
             nodeIntegration: false,
             contextIsolation: true,
             preload: path.join(__dirname, 'preload.js')
         },
-        icon: path.join(__dirname, '../assets/icon.png'),
-        titleBarStyle: 'default',
         show: false
     });
 
@@ -40,7 +39,25 @@ function createWindow() {
 
 app.whenReady().then(() => {
     // Initialize database
-    dbManager = new DatabaseManager();
+    try {
+        // Ensure data directory exists
+        const dataDir = path.join(__dirname, '../data');
+        if (!fs.existsSync(dataDir)) {
+            fs.mkdirSync(dataDir, { recursive: true });
+        }
+        
+        // Initialize database with better-sqlite3
+        const dbPath = path.join(dataDir, 'app.db');
+        const DatabaseManager = require('../src/database/db');
+        dbManager = new DatabaseManager();
+        console.log('Database initialized successfully at:', dbPath);
+    } catch (error) {
+        console.error('Database initialization error:', error);
+        dialog.showErrorBox('Database Error', 
+            `Failed to initialize database: ${error.message}\nApplication will close.`);
+        app.quit();
+        return;
+    }
     
     createWindow();
 
